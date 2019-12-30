@@ -1,5 +1,8 @@
+import React from "react";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
+import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from "react-navigation-tabs";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -19,16 +22,30 @@ export default (signedIn = false) => createAppContainer(
         }),
         App: createBottomTabNavigator({
             Dash,
-            // Passamos a createStackNavigator como objeto para poder usar icons depois
-            /* New: {
+            // Passamos a createStackNavigator como objeto para poder usar icons depois = navigations options
+            New: {
                 screen: createStackNavigator({
                     SelectProvider,
                     SelectDateTime,
                     Confirm
-                })
-            }, */
+                }, {
+                    defaultNavigationOptions: {
+                        headerTransparent: true,
+                        headerTintColor: '#fff',
+                        headerLeftContainerStyle: {
+                            marginLeft: 20,
+                        },
+                    }
+                }),
+                navigationOptions: {
+                    tabBarLabel: 'Agendar',
+                    tabBarVisible: false,
+                    tabBarIcon: ( <Icon name="add-circle-outline" size={20} color="#rgba(255, 255, 255, 0.6)"/> )
+                }
+            },
             Profile
         }, {
+            resetOnBlur: true,
             tabBarOptions: {
                 // Nao deixa o teclado ir para cima da tabBar
                 keyboardHidesTabBar: true,

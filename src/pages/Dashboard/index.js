@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { withNavigationFocus } from "react-navigation";
 import Icon from "react-native-vector-icons/MaterialIcons";
+
 import api from "../../services/api";
 
 import Background from "../../components/background";
@@ -7,18 +9,22 @@ import Appointment from "../../components/Appointment";
 
 import { Container, Title, List } from "./styles";
 
-export default function Dash() {
+function Dash({ isFocused }) {
 
     const [ appointments, setAppointments ] = useState([]);
 
-    useEffect(() => {
-        async function loadAppointments() {
-            const response = await api.get('appointments');
+    async function loadAppointments() {
+        const response = await api.get('appointments');
+        setAppointments(response.data);
+    }
 
-            setAppointments(response.data);
+    // Loading em tempo real do dash com novos agendamentos
+    useEffect(() => {
+        if (isFocused) {
+            loadAppointments()
         }
-        loadAppointments();
-    }, []);
+    }, [isFocused]);
+
 
     // função para cancelar o agendamento
     async function handleCancel(id) {
@@ -57,4 +63,5 @@ Dash.navigationOptions = {
     tabBarIcon: ({tintColor}) => <Icon name="event" size={20} color={tintColor} />
     // tintColor vem direto do react navigation
 }
-                        
+        
+export default withNavigationFocus(Dash);
