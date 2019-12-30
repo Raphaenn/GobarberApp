@@ -1,14 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Icon from "react-native-vector-icons/MaterialIcons";
+import api from "../../services/api";
 
 import Background from "../../components/background";
 import Appointment from "../../components/Appointment";
 
 import { Container, Title, List } from "./styles";
 
-const data = [1, 2, 3, 4, 5];
-
 export default function Dash() {
+
+    const [ appointments, setAppointments ] = useState([]);
+
+    useEffect(() => {
+        async function loadAppointments() {
+            const response = await api.get('appointments');
+
+            setAppointments(response.data);
+        }
+        loadAppointments();
+    }, []);
+
+    // função para cancelar o agendamento
+    async function handleCancel(id) {
+        const response = await api.delete(`/appointments/${id}`);
+
+        // buscar o appontment e setar a propriedade canceledat
+        setAppointments(
+            appointments.map(appointment => appointment.id === id ?
+                {
+                    ...appointment,
+                    canceled_at: response.data.canceled_at,
+                } : appointment
+                )
+        );
+    };
 
     return (
         <Background>
@@ -16,10 +41,10 @@ export default function Dash() {
                 <Title>Agendamentos</Title>
 
                 <List
-                    data={data}
-                    keyExtractor={item => String(item)}
+                    data={appointments}
+                    keyExtractor={item => String(item.id)}
                     renderItem={({item}) => (
-                        <Appointment data={item} />
+                        <Appointment onCancel={() => handleCancel(item.id)} data={item} />
                    )}
                 ></List>
             </Container>

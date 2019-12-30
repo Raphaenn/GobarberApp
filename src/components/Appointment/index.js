@@ -1,25 +1,41 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { parseISO, formatRelative } from "date-fns"
+import pt from "date-fns/locale/pt";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { TouchableOpacity } from "react-native";
 
 import { Container, Left, Avatar, Info, Name, Time } from "./styles";
 
-export default function Appointment() {
+// pego a propriedade data e a onCancel que é a funçao que vai no botao de cancelamento
+export default function Appointment({ data, onCancel }) {
+
+    const dateParsed = useMemo(
+        () => {
+            return formatRelative(parseISO(data.date), new Date(), {
+                locale: pt,
+                addSuffix: true,
+            });
+        }, [data.date]
+    );
 
     return (
-            <Container>
+            <Container past={data.past}>
                 <Left>
-                    <Avatar source={{ uri: 'https://api.adorable.io/avatars/50/abott@adorable.png'}} />
+                    <Avatar source={{ uri: data.provider.avatar ? 
+                        data.provider.avatar.url : 
+                        `https://api.adorable.io/avatars/50/${data.provider.name}.png`}} />
 
                     <Info>
-                        <Name>Raphael Neves</Name>
-                        <Time>em 3 horas</Time>
+                        <Name>{data.provider.name}</Name>
+                        <Time>{dateParsed}</Time>
                     </Info>
                 </Left>
 
-                <TouchableOpacity onPress={() => {}} >
+                { data.cancelable && !data.canceled_at && (
+                    <TouchableOpacity onPress={onCancel} >
                     <Icon  name="event-busy" size={20} color="#f64c75" />
                 </TouchableOpacity>
+                )}
             </Container>
     )
 }

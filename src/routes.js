@@ -6,6 +6,10 @@ import SignUp from "./pages/SignUp";
 import Dash from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 
+import SelectProvider from "./pages/New/SelectProvider";
+import SelectDateTime from "./pages/New/SelectDateTime";
+import Confirm from "./pages/New/Confirm";
+
 // retornar func em vez de component para poder fazer um if. 
 export default (signedIn = false) => createAppContainer(
     createSwitchNavigator({
@@ -15,6 +19,14 @@ export default (signedIn = false) => createAppContainer(
         }),
         App: createBottomTabNavigator({
             Dash,
+            // Passamos a createStackNavigator como objeto para poder usar icons depois
+            /* New: {
+                screen: createStackNavigator({
+                    SelectProvider,
+                    SelectDateTime,
+                    Confirm
+                })
+            }, */
             Profile
         }, {
             tabBarOptions: {
